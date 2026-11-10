@@ -1,0 +1,9 @@
+# Tout ce qui tourne dans un conteneur Linux doit garder des fins de ligne Linux (LF),
+# même quand le repo est cloné sous Windows. Sans ça, les scripts plantent
+# avec "/bin/sh^M: not found".
+* text=auto eol=lf
+
+# Fichiers binaires : à ne jamais convertir.
+*.png binary
+*.jpg binary
+*.ico binary

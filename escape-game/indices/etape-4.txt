@@ -1,0 +1,26 @@
+ÉTAPE 4 - Le coffre-fort (le volume)
+
+1. Arrête PROPREMENT le conteneur. C'est à ce moment-là qu'il dépose
+   le morceau 4 dans le volume escape-data :
+
+    docker stop escape
+
+   Attention : "docker rm -f escape" tue le conteneur sans le prévenir,
+   et le morceau n'est jamais écrit. Si tu l'as fait, rejoue (voir plus bas).
+
+2. Le conteneur est arrêté, mais le volume existe toujours.
+   Lance un AUTRE conteneur, tout petit, qui monte ce volume sur /data
+   et affiche le fichier :
+
+    docker run --rm -v escape-data:/data alpine:3.22 cat /data/morceau-4.txt
+
+   -v escape-data:/data   = "branche le volume escape-data dans le dossier /data"
+   --rm                   = "supprime ce conteneur dès qu'il a fini"
+
+Le fichier est introuvable ? Tu as peut-être lancé le jeu sans l'option
+-v escape-data:/coffre-fort, ou utilisé docker rm -f. Rejoue depuis le début :
+
+    docker rm -f escape
+    docker volume rm escape-data
+
+puis relance les deux commandes de LANCER.md.

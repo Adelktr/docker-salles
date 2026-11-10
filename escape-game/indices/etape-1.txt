@@ -1,0 +1,11 @@
+ÉTAPE 1 - Lire le journal du conteneur
+
+Tout ce qu'un conteneur affiche est enregistré dans son journal (ses "logs").
+Pour le lire :
+
+    docker logs escape
+
+Tu dois voir un message d'accueil et le MORCEAU 1.
+
+Rien ne s'affiche ? Vérifie que le conteneur tourne avec : docker ps
+S'il n'apparaît pas, relance les deux commandes de LANCER.md.

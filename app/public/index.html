@@ -1,0 +1,95 @@
+<!doctype html>
+<html lang="fr">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Salles - réservations</title>
+  <style>
+    body { font-family: system-ui, sans-serif; max-width: 760px; margin: 2rem auto; padding: 0 1rem; color: #222; }
+    h1 { margin-bottom: .2rem; }
+    .etat { padding: .7rem 1rem; border-radius: 6px; margin: 1rem 0; font-weight: bold; }
+    .ok { background: #e0f2f1; color: #00695c; }
+    .ko { background: #fdecea; color: #b71c1c; }
+    .conteneur { color: #666; font-size: .9rem; }
+    table { width: 100%; border-collapse: collapse; margin: 1rem 0; }
+    th, td { text-align: left; padding: .4rem; border-bottom: 1px solid #ddd; }
+    form { display: grid; grid-template-columns: 1fr 1fr; gap: .5rem; }
+    input, button { padding: .5rem; font: inherit; }
+    button { grid-column: span 2; cursor: pointer; }
+    #message { color: #b71c1c; }
+  </style>
+</head>
+<body>
+  <h1>Salles</h1>
+  <p class="conteneur">Réservation de salles de l'école (données fictives)</p>
+
+  <div id="etat" class="etat ko">Base : ...</div>
+  <p class="conteneur">Cette page est servie par le conteneur : <strong id="conteneur">...</strong></p>
+
+  <h2>Réservations</h2>
+  <table>
+    <thead><tr><th>Jour</th><th>Créneau</th><th>Salle</th><th>Motif</th></tr></thead>
+    <tbody id="liste"><tr><td colspan="4">Chargement...</td></tr></tbody>
+  </table>
+
+  <h2>Ajouter une réservation</h2>
+  <form id="formulaire">
+    <input name="salle" placeholder="Salle (ex. Salle 101)" required>
+    <input name="jour" type="date" required>
+    <input name="creneau" placeholder="Créneau (ex. 14:00 - 16:00)" required>
+    <input name="motif" placeholder="Motif (ex. Révisions)" required>
+    <button type="submit">Réserver</button>
+  </form>
+  <p id="message"></p>
+
+  <script>
+    async function rafraichir() {
+      const sante = await fetch("/api/sante").then((r) => r.json());
+      const etat = document.getElementById("etat");
+      etat.textContent = "Base : " + sante.base;
+      etat.className = "etat " + (sante.base === "connectée" ? "ok" : "ko");
+      document.getElementById("conteneur").textContent = sante.conteneur;
+
+      const liste = document.getElementById("liste");
+      const reponse = await fetch("/api/reservations");
+      if (!reponse.ok) {
+        liste.innerHTML = '<tr><td colspan="4">Pas de base de données : rien à afficher pour l\'instant.</td></tr>';
+        return;
+      }
+      const reservations = await reponse.json();
+      liste.innerHTML = "";
+      for (const r of reservations) {
+        const ligne = document.createElement("tr");
+        for (const valeur of [r.jour, r.creneau, r.salle, r.motif]) {
+          const cellule = document.createElement("td");
+          cellule.textContent = valeur;
+          ligne.appendChild(cellule);
+        }
+        liste.appendChild(ligne);
+      }
+    }
+
+    document.getElementById("formulaire").addEventListener("submit", async (e) => {
+      e.preventDefault();
+      const donnees = Object.fromEntries(new FormData(e.target));
+      const reponse = await fetch("/api/reservations", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify(donnees),
+      });
+      const message = document.getElementById("message");
+      if (reponse.ok) {
+        message.textContent = "";
+        e.target.reset();
+      } else {
+        const erreur = await reponse.json();
+        message.textContent = "Impossible d'enregistrer : " + erreur.erreur;
+      }
+      rafraichir();
+    });
+
+    rafraichir();
+    setInterval(rafraichir, 3000);
+  </script>
+</body>
+</html>

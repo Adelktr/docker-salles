@@ -1,0 +1,17 @@
+{
+  "name": "salles-api",
+  "version": "1.0.0",
+  "description": "Réservation de salles de l'école (données fictives) - support du cours Docker",
+  "main": "server.js",
+  "private": true,
+  "scripts": {
+    "start": "node server.js"
+  },
+  "engines": {
+    "node": ">=24"
+  },
+  "dependencies": {
+    "express": "^5.3.0",
+    "pg": "^8.23.1"
+  }
+}

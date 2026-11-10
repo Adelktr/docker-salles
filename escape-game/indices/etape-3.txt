@@ -1,0 +1,14 @@
+ÉTAPE 3 - Le fichier caché
+
+Regarde ce qu'il y a dans le dossier /cachette du conteneur :
+
+    docker exec escape ls /cachette
+
+Tu ne vois que des leurres. Sous Linux, un fichier dont le nom commence
+par un point est caché. L'option -a de ls affiche tout :
+
+    docker exec escape ls -la /cachette
+
+Tu vois maintenant le fichier .morceau-3. Pour afficher son contenu :
+
+    docker exec escape cat /cachette/.morceau-3

@@ -1,0 +1,11 @@
+ÉTAPE 2 - Les variables d'environnement
+
+"docker exec" lance une commande À L'INTÉRIEUR d'un conteneur qui tourne.
+La commande "env" liste les variables d'environnement. Donc :
+
+    docker exec escape env
+
+Tu vois une variable MORCEAU_2, mais elle est encodée (illisible).
+Une autre variable, INDICE, te dit comment la décoder :
+
+    docker exec escape decoder MORCEAU_2
