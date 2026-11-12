@@ -1,91 +1,52 @@
 # TD 2 - Ton premier Dockerfile
 
-**Objectif :** écrire la recette qui transforme l'application Salles en image Docker, puis lancer cette image. Tu n'as pas besoin d'installer Node.js sur ton ordinateur : Docker s'en charge.
+**Objectif :** écrire toi-même la recette qui transforme l'application Salles en image Docker, puis lancer cette image. Tu n'as pas besoin d'installer Node.js sur ton ordinateur : Docker s'en charge.
 
 **Durée :** 1 h
+
+**Règle du TD :** aucune commande et aucune ligne de Dockerfile ne sont données. Tu as la syntaxe dans le [mémo](memo.md) et sur les slides. Les images se trouvent sur [Docker Hub](https://hub.docker.com).
 
 ---
 
 ## Étape 1 - Récupérer le projet
 
-L'adresse du repo est postée sur le canal de la classe. Remplace `ADRESSE_DU_REPO` par cette adresse :
+Clone le repo `docker-salles` (son adresse est sur le canal de la classe) et ouvre-le dans ton éditeur.
 
-```
-git clone ADRESSE_DU_REPO docker-salles
-```
+**Tu dois voir :** les dossiers `app`, `td` et `escape-game`.
 
-```
-cd docker-salles
-```
+Regarde le dossier `app` : c'est toute l'application. Tu n'as pas besoin de la modifier, mais tu dois la **comprendre** assez pour la faire tourner :
 
-**Tu dois voir :** avec `ls` (macOS) ou `dir` (Windows), les dossiers `app`, `td` et `escape-game`.
+- `package.json` : la liste des dépendances, et la commande de démarrage (dans `scripts`) ;
+- `server.js` : l'application. Le haut du fichier dit sur quel port elle écoute.
 
-Ouvre le dossier `docker-salles` dans ton éditeur (VS Code par exemple). Regarde `app/server.js` : c'est toute l'application. Tu n'as pas besoin de la modifier.
-
-## Étape 2 - Créer le fichier Dockerfile
+## Étape 2 - Écrire le Dockerfile
 
 Dans le dossier `app`, crée un fichier nommé exactement `Dockerfile` : avec un D majuscule, **sans extension** (ni `.txt`, ni `.docker`).
 
-Écris dedans, ligne par ligne, en lisant l'explication de chaque ligne :
+Écris dedans la recette de l'image, une instruction par ligne. Ta recette doit :
 
-```dockerfile
-FROM node:24
-```
-Pars d'une image qui contient déjà Node.js, en version 24. On ne part jamais de rien.
+1. partir de l'image **officielle de Node.js**, en **version 24**, dans sa variante **par défaut**, la plus complète (pas `alpine`, pas `slim` : on allégera au TD 3). Cherche le tag sur Docker Hub ;
+2. travailler dans le dossier `/app` de l'image ;
+3. copier **tout** le contenu du dossier `app` de ta machine dans ce dossier de l'image ;
+4. installer les dépendances de l'application **pendant le build**, avec `npm install` ;
+5. documenter le port sur lequel l'application écoute ;
+6. démarrer l'application quand un conteneur se lance.
 
-```dockerfile
-WORKDIR /app
-```
-Dans l'image, place-toi dans le dossier `/app` (il est créé s'il n'existe pas). Toutes les commandes suivantes s'exécutent là.
-
-```dockerfile
-COPY . .
-```
-Copie tout le contenu du dossier `app` de ton ordinateur (le premier `.`) dans le dossier courant de l'image, `/app` (le second `.`).
-
-```dockerfile
-RUN npm install
-```
-Pendant la fabrication de l'image, installe les dépendances (express, pg).
-
-```dockerfile
-EXPOSE 3000
-```
-Indique que l'application écoute sur le port 3000. C'est de la documentation : ça n'ouvre rien tout seul.
-
-```dockerfile
-CMD ["node", "server.js"]
-```
-La commande à lancer quand un conteneur démarre à partir de cette image.
-
-Ton fichier complet :
-
-```dockerfile
-FROM node:24
-WORKDIR /app
-COPY . .
-RUN npm install
-EXPOSE 3000
-CMD ["node", "server.js"]
-```
+Avant de passer à la suite, relis ton fichier et réponds pour toi-même : quelle ligne s'exécute pendant le build, et laquelle à chaque démarrage de conteneur ?
 
 ## Étape 3 - Fabriquer l'image
 
-Depuis le dossier `docker-salles` (pas depuis `app`) :
+Depuis le dossier `docker-salles` (pas depuis `app`), fabrique une image nommée **`salles-api`** à partir du Dockerfile du dossier `app`.
 
-```
-docker build -t salles-api ./app
-```
-
-`-t salles-api` donne un nom à l'image. `./app` indique le dossier qui contient le `Dockerfile`.
-
-**Tu dois voir :** des étapes `[1/4]`, `[2/4]`... qui défilent, puis `naming to docker.io/library/salles-api`. La première fois, ça prend une à deux minutes : Docker télécharge l'image `node:24`.
+**Tu dois voir :** des étapes `[1/4]`, `[2/4]`... qui défilent, puis `naming to docker.io/library/salles-api`. La première fois, ça prend une à deux minutes : Docker télécharge l'image de Node.
 
 ## Étape 4 - Lancer un conteneur
 
-```
-docker run -d --name api -p 3000:3000 salles-api
-```
+Lance un conteneur à partir de l'image `salles-api` :
+
+- en tâche de fond ;
+- nommé **`api`** ;
+- accessible sur le port **3000** de ton ordinateur.
 
 Ouvre <http://localhost:3000>.
 
@@ -93,27 +54,17 @@ Ouvre <http://localhost:3000>.
 
 ## Étape 5 - Tu es bien dans un conteneur
 
-Sur la page, repère la ligne « Cette page est servie par le conteneur : ... ». Puis :
-
-```
-docker ps
-```
+Sur la page, repère la ligne « Cette page est servie par le conteneur : ... ». Puis affiche la liste des conteneurs qui tournent.
 
 **Tu dois voir :** dans la colonne `CONTAINER ID`, le même code que sur la page. Le nom de la machine qui sert la page, c'est le conteneur.
 
-Regarde aussi le journal :
-
-```
-docker logs api
-```
+Affiche aussi le journal du conteneur `api`.
 
 **Tu dois voir :** `Salles : application démarrée sur le port 3000`, puis une ligne `Base : non connectée`. L'application cherche une base, n'en trouve pas, et réessaie toute seule.
 
 ## Étape 6 - La taille de ton image
 
-```
-docker image ls salles-api
-```
+Affiche l'image `salles-api` avec sa taille.
 
 **Tu dois voir :** une taille autour de **1 à 1,6 Go**. Note-la, on s'en sert au TD 3. Pour une application de deux fichiers, c'est énorme.
 
@@ -121,21 +72,9 @@ docker image ls salles-api
 
 Ouvre `app/public/index.html`, et remplace `<h1>Salles</h1>` par `<h1>Salles - mon équipe</h1>`. Enregistre, puis recharge <http://localhost:3000>.
 
-**Tu dois voir :** rien n'a changé. Le conteneur a été créé à partir de l'image, et l'image a été fabriquée **avant** ta modification.
+**Tu dois voir :** rien n'a changé.
 
-Pour voir ta modification, il faut refabriquer l'image et recréer le conteneur :
-
-```
-docker rm -f api
-```
-
-```
-docker build -t salles-api ./app
-```
-
-```
-docker run -d --name api -p 3000:3000 salles-api
-```
+Pourquoi ? Trouve la réponse, puis fais ce qu'il faut pour voir ton nouveau titre. Indice : trois commandes, et la première supprime quelque chose.
 
 **Tu dois voir :** ton nouveau titre sur <http://localhost:3000>.
 
@@ -148,35 +87,20 @@ docker run -d --name api -p 3000:3000 salles-api
 | Ce que tu vois | Ce qu'il faut faire |
 |---|---|
 | `failed to read dockerfile: open Dockerfile: no such file or directory` | Le fichier ne s'appelle pas exactement `Dockerfile`, ou il n'est pas dans `app`. Sous Windows, il s'appelle souvent `Dockerfile.txt` sans que tu le voies : dans l'Explorateur, menu **Affichage**, coche **Extensions de noms de fichiers**, puis renomme le fichier en `Dockerfile`. Même piège plus tard avec `.dockerignore`. |
-| `unable to prepare context: path "./app" not found` | Tu n'es pas dans le dossier `docker-salles`. Fais `cd docker-salles`. |
-| `Bind for 0.0.0.0:3000 failed: port is already allocated` | Un autre programme (ou un ancien conteneur) utilise le port 3000. Lance `docker ps` et supprime l'ancien conteneur, ou utilise `-p 3001:3000` et ouvre <http://localhost:3001>. |
-| `Conflict. The container name "/api" is already in use` | Supprime l'ancien conteneur : `docker rm -f api`. |
-| `toomanyrequests: You have reached your pull rate limit` | Lance `docker login` (voir TD 1, étape 2). |
-| La page affiche « Cannot GET / » ou rien | Lis `docker logs api` : le message d'erreur y est. |
+| `unable to prepare context: path "./app" not found` | Tu n'es pas dans le dossier `docker-salles`. |
+| `manifest unknown` ou `not found` sur la ligne `FROM` | Le tag n'existe pas. Vérifie son orthographe exacte dans l'onglet *Tags* de Docker Hub. |
+| `npm: not found` | Ton image de départ n'est pas une image Node. |
+| `Bind for 0.0.0.0:3000 failed: port is already allocated` | Un autre programme (ou un ancien conteneur) utilise le port 3000. Liste les conteneurs et supprime l'ancien, ou prends le port 3001 sur ta machine. |
+| `Conflict. The container name "/api" is already in use` | Supprime de force l'ancien conteneur `api`. |
+| `toomanyrequests: You have reached your pull rate limit` | Connecte-toi à Docker Hub (TD 1, étape 2). |
+| La page affiche « Cannot GET / », ou rien | Lis le journal du conteneur : le message d'erreur y est. |
+| `Error: Cannot find module` | Les dépendances ne sont pas installées dans l'image : vérifie ta ligne `RUN`. |
 
 ## Bonus
 
-Les **tags** servent à garder plusieurs versions d'une même image :
+Les **tags** servent à garder plusieurs versions d'une même image. Fabrique une image `salles-api` avec le tag `v1`. Modifie à nouveau le titre, puis fabrique `salles-api` avec le tag `v2`.
 
-```
-docker build -t salles-api:v1 ./app
-```
-
-Modifie à nouveau le titre, puis :
-
-```
-docker build -t salles-api:v2 ./app
-```
-
-```
-docker run -d --name api-v1 -p 3001:3000 salles-api:v1
-```
-
-```
-docker run -d --name api-v2 -p 3002:3000 salles-api:v2
-```
-
-Compare <http://localhost:3001> et <http://localhost:3002>. Puis fais le ménage : `docker rm -f api-v1 api-v2`.
+Lance les deux versions en même temps : `v1` sur le port 3001 de ta machine, `v2` sur le port 3002. Compare <http://localhost:3001> et <http://localhost:3002>, puis supprime ces deux conteneurs.
 
 ---
 
