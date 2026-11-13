@@ -1,0 +1,8 @@
+title: Initiation à Docker
+description: Les TD du cours Docker - IIM, A3 Web development & Innovations
+theme: jekyll-theme-minimal
+lang: fr
+exclude:
+  - app/
+  - escape-game/Dockerfile
+  - escape-game/*.sh
