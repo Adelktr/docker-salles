@@ -9,7 +9,7 @@ Pour toutes les options d'une commande : `docker <commande> --help` (par exemple
 ## Trouver une image sur Docker Hub
 
 1. Va sur <https://hub.docker.com> et cherche le nom du logiciel (nginx, node, postgres…).
-2. Prends l'image marquée **Docker Official Image**. Les autres sont publiées par n'importe qui.
+2. Prends l'image **officielle** : son nom n'a pas de préfixe (`nginx`, pas `bitnami/nginx`), et l'adresse de sa page commence par `hub.docker.com/_/`. Les autres sont publiées par n'importe qui.
 3. Ouvre l'onglet **Tags** : ce sont toutes les versions disponibles. Le nom complet d'une image, c'est `<image>:<tag>`.
 4. Dans un tag, `alpine` désigne la variante la plus légère, construite sur Alpine Linux.
 5. N'utilise jamais `latest` ni une image sans tag : écris toujours une version précise.

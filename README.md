@@ -25,7 +25,7 @@ docker-salles/
     public/index.html  la page web
     package.json       les dépendances
   td/                  les énoncés des TD, à faire dans l'ordre, et le mémo des commandes
-  escape-game/         le jeu de fin de journée (lundi)
+  escape-game/         le jeu bonus, si tu as fini le TD 4
   .env.example         le modèle de fichier de configuration
 ```
 
@@ -45,14 +45,14 @@ Ce que **tu** ajoutes au fil des TD :
 | [TD 1](td/td1-premiers-conteneurs.md) | Tes premiers conteneurs | 40 min |
 | [TD 2](td/td2-dockerfile.md) | Ton premier Dockerfile | 1 h |
 | [TD 3](td/td3-couches-et-cache.md) | Une image plus légère, plus rapide, plus propre | 50 min |
-| [TD 4](td/td4-volumes.md) | Des données qui survivent | 1 h |
+| [TD 4](td/td4-volumes.md) | Des données qui survivent | fin de lundi, à finir chez toi si besoin |
 | [TD 5](td/td5-compose.md) | Tout lancer avec Docker Compose | 50 min |
 
 Les TD ne donnent **aucune commande** : c'est à toi de les écrire, à partir du [mémo](td/memo.md), et de trouver les images sur [Docker Hub](https://hub.docker.com). Chaque étape te dit ce que tu dois voir pour savoir si tu as réussi, et chaque TD a une section « Si ça ne marche pas » avec les erreurs les plus courantes. Lis-la avant de lever la main.
 
 ## Escape game
 
-Fin de journée, lundi : [escape-game/LANCER.md](escape-game/LANCER.md).
+Un bonus pour ceux qui ont fini le TD 4 : [escape-game/LANCER.md](escape-game/LANCER.md). Il se fait dans le repo `docker-salles`.
 
 ## Lancer l'application
 

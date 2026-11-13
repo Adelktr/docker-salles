@@ -10,7 +10,11 @@
 
 ---
 
-## Étape 1 - Comprendre l'application
+## Étape 1 - Récupérer le repo et comprendre l'application
+
+Récupère le repo [docker-salles](https://github.com/Adelktr/docker-salles) sur ton ordinateur, puis ouvre-le dans ton éditeur. Tous les TD suivants se font dedans.
+
+**Tu dois voir :** un dossier `docker-salles`, avec dedans `app`, `td` et `escape-game`.
 
 Ouvre le dossier `app` : c'est toute l'application. Tu n'as pas besoin de la modifier, mais tu dois la **comprendre** assez pour la faire tourner :
 

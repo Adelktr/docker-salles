@@ -8,6 +8,8 @@
 
 **Règle du TD :** aucune commande n'est donnée. Pour chaque étape, écris toi-même la commande à partir du [mémo](memo.md) (et des slides), et trouve les images sur [Docker Hub](https://hub.docker.com). Vérifie ensuite que tu obtiens bien ce qui est indiqué sous « Tu dois voir ».
 
+**Pas besoin du repo `docker-salles` pour ce TD :** tout se passe dans le terminal et sur Docker Hub.
+
 **Quel terminal ?** Sous Windows, utilise **PowerShell**, pas Git Bash : Git Bash casse `docker exec -it`. Sous macOS, le **Terminal**.
 
 ---
@@ -38,11 +40,10 @@ Docker n'avait pas l'image, il l'a téléchargée, il a créé un conteneur, le 
 
 ## Étape 4 - Un vrai serveur web
 
-Lance le serveur web **nginx**, avec ces contraintes :
+Lance un conteneur nommé **`web`**, qui fait tourner le serveur web **nginx**. Le nom compte : toutes les étapes suivantes l'utilisent. Les contraintes :
 
 - l'image : l'image **officielle** de nginx, en **version 1.30**, dans sa variante **slim** construite sur **Alpine 3.24** (la plus légère). Trouve le bon tag dans l'onglet *Tags* de Docker Hub ;
 - le conteneur tourne **en tâche de fond** : ton terminal doit rester libre ;
-- il s'appelle **`web`** ;
 - nginx écoute sur le port **80** du conteneur, et tu veux l'ouvrir sur le port **8080** de ton ordinateur.
 
 **Tu dois voir :** une longue suite de lettres et de chiffres. C'est l'identifiant du conteneur.

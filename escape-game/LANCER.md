@@ -2,7 +2,7 @@
 
 # Escape game Docker
 
-Un cargo est bloqué au port. Pour le libérer, il te faut un code de 4 mots, cachés à 4 endroits d'un conteneur. Tu as 30 minutes, en binôme.
+Un cargo est bloqué au port. Pour le libérer, il te faut un code de 4 mots, cachés à 4 endroits d'un conteneur. C'est un bonus, pour ceux qui ont fini le TD 4 : 30 minutes environ, seul ou en binôme.
 
 Tu n'as besoin que des commandes vues aujourd'hui. **Ne lis pas les fichiers du dossier `escape-game/`** pour trouver les réponses, elles y sont encodées : utilise Docker.
 

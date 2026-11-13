@@ -2,9 +2,9 @@
 
 # TD 4 - Des données qui survivent
 
-**Objectif :** lancer une base de données PostgreSQL dans un conteneur, y écrire des données, **supprimer le conteneur**, et retrouver les données. Puis voir ce qui se passe sans volume.
+**Objectif :** lancer une base de données PostgreSQL dans un conteneur, y écrire des données, **supprimer le conteneur**, et retrouver les données.
 
-**Durée :** 1 h
+**Durée :** jusqu'à la fin de la journée. Pas fini ? Termine-le chez toi avant mardi matin : le TD 5 en a besoin.
 
 **Règle du TD :** aucune commande Docker n'est donnée. Tu as la syntaxe dans le [mémo](memo.md) et sur les slides. Pour PostgreSQL, ta référence est la page de l'image officielle sur [Docker Hub](https://hub.docker.com) : lis-la, tout ce qu'il te faut y est.
 
@@ -75,41 +75,7 @@ SELECT * FROM notes;
 
 **Tu dois voir :** ta ligne `Ma première donnée`. C'est un **nouveau** conteneur, mais les données étaient dans le volume, pas dans le conteneur. Sors avec `\q`.
 
-## Étape 7 - Le contre-exemple : sans volume
-
-Lance une autre base, nommée **`db-sans-volume`**, comme à l'étape 3 mais **sans** volume. Attends une dizaine de secondes, ouvre `psql` dedans et crée la même table :
-
-```sql
-CREATE TABLE notes (id serial PRIMARY KEY, texte text);
-```
-
-Sors avec `\q`. Supprime ce conteneur **avec ses volumes anonymes** (le mémo te dit comment). Sans volume nommé, Docker avait créé tout seul un espace de stockage temporaire pour ce conteneur : on le supprime avec lui.
-
-Relance un conteneur `db-sans-volume`, attends une dizaine de secondes, rouvre `psql` et cherche ta table :
-
-```sql
-SELECT * FROM notes;
-```
-
-**Tu dois voir :** `ERROR: relation "notes" does not exist`. Sans volume nommé, les données sont parties avec le conteneur. Sors avec `\q`.
-
-## Étape 8 - Observer les volumes
-
-Affiche la liste des volumes.
-
-**Tu dois voir :** `donnees-td4`, et peut-être des volumes aux noms illisibles : ce sont des volumes **anonymes**, que Docker crée tout seul quand une image en demande un et que tu ne lui en donnes pas.
-
-Affiche le détail du volume `donnees-td4`.
-
-**Tu dois voir :** un `Mountpoint` du type `/var/lib/docker/volumes/donnees-td4/_data`. C'est là que Docker range les fichiers. Sous macOS et Windows, ce dossier est dans la machine virtuelle de Docker Desktop : tu ne le trouveras pas dans ton explorateur de fichiers, et c'est voulu.
-
-## Étape 9 - Faire le ménage
-
-Supprime les deux conteneurs avec leurs volumes anonymes, puis le volume `donnees-td4`.
-
-**Tu dois voir :** plus aucun conteneur, et `donnees-td4` absent de la liste des volumes.
-
-Pour le TD 5, ne supprime surtout pas ton fichier `.env`.
+Pour le TD 5, garde ton fichier `.env` : tu en auras besoin.
 
 ---
 
@@ -121,7 +87,6 @@ Pour le TD 5, ne supprime surtout pas ton fichier `.env`.
 | `Error: Database is uninitialized and superuser password is not specified` | Le conteneur n'a pas reçu ton `.env`. Vérifie que tu es dans `docker-salles`, que le fichier s'appelle bien `.env`, et que tu passes bien ce fichier au conteneur. |
 | `psql: error: ... FATAL: database "salles" does not exist` ou `role "salles" does not exist` | La base est encore en train de s'initialiser : attends dix secondes et recommence. Si ça persiste, vérifie les lignes `POSTGRES_USER` et `POSTGRES_DB` de ton `.env`. |
 | `Conflict. The container name "/db-td4" is already in use` | Supprime de force l'ancien conteneur, puis relance. |
-| `Error response from daemon: remove donnees-td4: volume is in use` | Un conteneur utilise encore le volume : supprime d'abord le conteneur. |
 | `the input device is not a TTY` | Tu es dans Git Bash. Utilise **PowerShell**. |
 | Rien ne se passe après `\q` | Vérifie que tu as bien tapé `\q` (barre oblique inversée), puis Entrée. |
 
