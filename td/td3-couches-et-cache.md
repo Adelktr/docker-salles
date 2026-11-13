@@ -1,6 +1,6 @@
 # TD 3 - Une image plus légère, plus rapide, plus propre
 
-**Objectif :** améliorer ton Dockerfile du TD 2 en appliquant cinq changements, un par un, et **mesurer** l'effet de chacun. Ton image va passer d'environ 1,1 Go à moins de 200 Mo.
+**Objectif :** améliorer ton Dockerfile du TD 2 en appliquant cinq changements, un par un. Ton image va passer d'environ 1,1 Go à moins de 200 Mo.
 
 **Durée :** 50 min
 
@@ -10,31 +10,30 @@ Tu pars du `app/Dockerfile` du TD 2. Tout se lance depuis le dossier `docker-sal
 
 ---
 
-## Le tableau à remplir
+## Critères d'acceptance
 
-Ouvre le fichier [`td/td3-mesures.md`](td3-mesures.md) : c'est ton tableau de mesures. Tu remplis une ligne après chaque étape.
+À la fin du TD, ton image `salles-api` doit respecter **tous** ces critères :
 
-Les trois mesures, que tu refais à chaque étape, toujours sur l'image `salles-api` :
+1. Elle part de l'image officielle de Node 24, dans sa variante la plus légère, et pèse **moins de 200 Mo** (colonne `DISK USAGE`).
+2. **Le cache marche** : après une modification du HTML, le build réutilise l'installation des dépendances. La ligne `RUN npm ...` est marquée `CACHED`.
+3. **Le fichier `.env` n'est pas dans l'image.**
+4. Les dépendances sont installées avec **`npm ci`**, sans les dépendances de développement.
+5. **L'application ne tourne pas en `root`**, mais avec l'utilisateur `node`.
+6. L'application marche toujours sur <http://localhost:3000>.
 
-**Mesure A - la taille :** affiche l'image `salles-api` avec sa taille. Lis la colonne `DISK USAGE` (`SIZE` sur les anciennes versions de Docker).
-
-**Mesure B - le cache :** modifie une lettre dans `app/public/index.html`, enregistre, puis refabrique l'image. Regarde la ligne `RUN npm ...` dans ce qui défile. Si elle est suivie de `CACHED`, Docker a réutilisé le résultat précédent. Sinon, il a tout réinstallé.
-
-**Mesure C - le contenu et l'utilisateur :** lance deux conteneurs jetables à partir de `salles-api`, qui se suppriment tout seuls dès qu'ils ont fini (le mémo te dit quelle option fait ça). Au lieu de démarrer l'application, le premier exécute `ls -a`, le second `whoami`. Le mémo te montre comment remplacer la commande de démarrage d'une image.
+**Comment vérifier les critères 3 et 5 :** lance un conteneur jetable à partir de `salles-api`, qui se supprime tout seul dès qu'il a fini (le mémo te dit quelle option fait ça), et qui exécute `ls -a` au lieu de démarrer l'application. Le mémo te montre comment remplacer la commande de démarrage d'une image. Fais pareil avec `whoami`.
 
 ---
 
-## Étape 0 - Mesurer le point de départ
+## Étape 0 - Un faux secret
 
-Pour que la mesure C ait du sens, crée un faux fichier secret dans le dossier `app` : un fichier nommé `.env` (avec le point au début) qui contient une seule ligne :
+Pour pouvoir vérifier le critère 3, crée un faux fichier secret dans le dossier `app` : un fichier nommé `.env` (avec le point au début) qui contient une seule ligne :
 
 ```
 SECRET=ne-doit-pas-finir-dans-l-image
 ```
 
-Puis fais un build, et les trois mesures A, B et C.
-
-**Tu dois voir :** une image d'environ 1,1 Go ; `RUN npm install` **sans** `CACHED` ; `.env` dans la liste des fichiers ; `root` comme utilisateur. Quatre problèmes : on les règle un par un.
+Fais un build avec ton Dockerfile du TD 2, et vérifie : aujourd'hui, aucun des critères 1 à 5 n'est respecté. On les règle un par un.
 
 ## Étape 1 - Une image de base plus petite
 
@@ -42,9 +41,9 @@ Ton image de départ embarque un Linux complet, avec des centaines d'outils dont
 
 Retourne sur la page de l'image officielle de Node.js sur Docker Hub, et trouve la variante **la plus légère** de la **version 24**. Remplace ton image de départ par celle-ci.
 
-Build, puis mesures A, B et C.
+Fais un build, et affiche l'image `salles-api` avec sa taille.
 
-**Tu dois voir :** la taille tombe sous les **200 Mo**, environ six fois moins. C'est le plus gros gain du TD.
+**Tu dois voir :** moins de **200 Mo**, environ six fois moins. C'est le plus gros gain du TD. **Critère 1 validé.**
 
 ## Étape 2 - L'ordre des instructions et le cache
 
@@ -58,13 +57,13 @@ Réorganise ton Dockerfile pour que l'installation des dépendances reste en cac
 - installe les dépendances ;
 - **ensuite seulement**, copie le reste du code.
 
-Fais un build, puis la mesure B **deux fois** : la première reconstruit tout (le Dockerfile a changé), la seconde montre l'effet.
+Fais un build. Puis modifie une lettre dans `app/public/index.html`, et refais un build. Regarde la ligne `RUN npm ...` dans ce qui défile.
 
-**Tu dois voir :** à la deuxième modification du HTML, `RUN npm install` est suivi de `CACHED`.
+**Tu dois voir :** `RUN npm install` est marqué `CACHED` : Docker a réutilisé l'installation précédente. **Critère 2 validé.**
 
 ## Étape 3 - Le fichier .dockerignore
 
-La mesure C montre encore ton `.env` **dans l'image**. Quiconque récupère ton image peut lire ton mot de passe.
+Ton `.env` est encore **dans l'image** : vérifie-le avec `ls -a` (voir les critères). Quiconque récupère ton image peut lire ton mot de passe.
 
 Crée dans le dossier `app` un fichier nommé exactement `.dockerignore` (avec le point, sans extension). Il fonctionne comme un `.gitignore` : ce qu'il liste n'est jamais envoyé à Docker pendant le build. Mets-y au moins :
 
@@ -72,9 +71,9 @@ Crée dans le dossier `app` un fichier nommé exactement `.dockerignore` (avec l
 - ton fichier de secrets ;
 - le journal d'erreurs de npm, `npm-debug.log`.
 
-Build, puis mesure C.
+Fais un build, et refais la vérification avec `ls -a`.
 
-**Tu dois voir :** `.env` a disparu de la liste. La taille ne bouge pas : c'est un gain de sécurité, pas de poids.
+**Tu dois voir :** `.env` a disparu de la liste. La taille ne bouge pas : c'est un gain de sécurité, pas de poids. **Critère 3 validé.**
 
 Tu peux maintenant **supprimer le faux fichier `app/.env`**.
 
@@ -84,25 +83,25 @@ Tu peux maintenant **supprimer le faux fichier `app/.env`**.
 
 Remplace `npm install` par `npm ci`, en demandant de **ne pas installer les dépendances de développement** (tests, linters), inutiles pour faire tourner l'application. Trouve la bonne option dans la [documentation de npm ci](https://docs.npmjs.com/cli/commands/npm-ci).
 
-Build, puis mesure A.
+Fais un build.
 
-**Tu dois voir :** presque pas de changement de taille, et c'est normal. Cette application n'a pas de dépendances de développement. Sur un vrai projet (React, TypeScript), le gain se compte en centaines de Mo.
+**Tu dois voir :** le build passe, et la taille ne change presque pas. C'est normal : cette application n'a pas de dépendances de développement. Sur un vrai projet (React, TypeScript), le gain se compte en centaines de Mo. **Critère 4 validé.**
 
 ## Étape 5 - Ne pas tourner en root
 
-La mesure C affiche `root` : ton application a tous les droits dans le conteneur. Si quelqu'un trouve une faille dans ton code, il a tous les droits aussi.
+Vérifie avec `whoami` (voir les critères) : tu obtiens `root`. Ton application a tous les droits dans le conteneur. Si quelqu'un trouve une faille dans ton code, il a tous les droits aussi.
 
 L'image officielle de Node contient déjà un utilisateur sans privilèges. Trouve son nom dans les [bonnes pratiques de l'image Node](https://github.com/nodejs/docker-node/blob/main/docs/BestPractices.md#non-root-user), et fais tourner ton application avec cet utilisateur. Réfléchis à l'endroit où placer l'instruction : les étapes d'installation, elles, ont besoin des droits.
 
-Build, puis mesure C.
+Fais un build, et refais la vérification avec `whoami`.
 
-**Tu dois voir :** le nom de cet utilisateur au lieu de `root`.
+**Tu dois voir :** `node` au lieu de `root`. **Critère 5 validé.**
 
 ## Le résultat
 
 Vérifie que l'application marche toujours : supprime l'ancien conteneur `api`, et relance-le comme au TD 2.
 
-**Tu dois voir :** la page sur <http://localhost:3000>, toujours avec « Base : non connectée ».
+**Tu dois voir :** la page sur <http://localhost:3000>, toujours avec « Base : non connectée ». **Critère 6 validé** : relis la liste des critères en haut du TD, ils doivent tous être respectés.
 
 Garde ce Dockerfile et ce `.dockerignore` : ce sont ceux de ton projet.
 
@@ -113,7 +112,7 @@ Garde ce Dockerfile et ce `.dockerignore` : ce sont ceux de ton projet.
 | Ce que tu vois | Ce qu'il faut faire |
 |---|---|
 | `npm ci` : `The npm ci command can only install with an existing package-lock.json` | Le fichier `package-lock.json` n'est pas copié avant l'installation. Ton `COPY` des fichiers de dépendances doit les prendre **tous les deux**. |
-| `npm` n'est jamais `CACHED` | Vérifie que la copie des fichiers de dépendances et l'installation sont bien **avant** la copie du reste du code. Et refais la mesure deux fois : la première suit forcément un changement du Dockerfile. |
+| `npm` n'est jamais `CACHED` | Vérifie que la copie des fichiers de dépendances et l'installation sont bien **avant** la copie du reste du code. Et modifie le HTML puis rebuild **deux fois** : le premier build après un changement du Dockerfile refait forcément tout. |
 | `.env` est toujours dans l'image | Le fichier doit s'appeler exactement `.dockerignore`, être dans `app` (à côté du Dockerfile), sans extension `.txt`. |
 | `whoami` affiche toujours `root` | L'instruction qui change d'utilisateur doit être après les `RUN` et avant `CMD`. Et il faut refaire le build. |
 | `Error: Cannot find module 'express'` au lancement | L'installation des dépendances a disparu, ou elle est faite avant que les fichiers de dépendances soient copiés. |
@@ -121,7 +120,7 @@ Garde ce Dockerfile et ce `.dockerignore` : ce sont ceux de ton projet.
 
 ## Bonus - jusqu'où peux-tu descendre ?
 
-Essaie de faire encore maigrir l'image **sans casser l'application** : la page doit toujours s'afficher. Pistes : les autres variantes de l'image `node` sur Docker Hub, le *multi-stage build* (on en parle demain). Note ta meilleure taille dans `td3-mesures.md`.
+Essaie de faire encore maigrir l'image **sans casser l'application** : la page doit toujours s'afficher. Pistes : les autres variantes de l'image `node` sur Docker Hub, le *multi-stage build* (on en parle demain). Note ta meilleure taille.
 
 ---
 
