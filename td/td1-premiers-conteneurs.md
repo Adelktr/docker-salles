@@ -38,7 +38,7 @@ Docker n'avait pas l'image, il l'a téléchargée, il a créé un conteneur, le 
 
 Lance le serveur web **nginx**, avec ces contraintes :
 
-- l'image : l'image **officielle** de nginx, en **version 1.29**, dans sa variante **la plus légère**. Trouve le bon tag dans l'onglet *Tags* de Docker Hub ;
+- l'image : l'image **officielle** de nginx, en **version 1.30**, dans sa variante **slim** construite sur **Alpine 3.24** (la plus légère). Trouve le bon tag dans l'onglet *Tags* de Docker Hub ;
 - le conteneur tourne **en tâche de fond** : ton terminal doit rester libre ;
 - il s'appelle **`web`** ;
 - nginx écoute sur le port **80** du conteneur, et tu veux l'ouvrir sur le port **8080** de ton ordinateur.
