@@ -1,0 +1,15 @@
+---
+---
+
+@import "{{ site.theme }}";
+
+/* Colonne de gauche plus étroite, contenu plus large */
+.wrapper { width: 1100px; }
+header { width: 190px; }
+header h1 { font-size: 22px; }
+section { width: 830px; }
+
+@media print, screen and (max-width: 1140px) {
+  .wrapper { width: auto; margin: 0; }
+  header, section, footer { float: none; position: static; width: auto; }
+}
