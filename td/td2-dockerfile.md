@@ -8,13 +8,9 @@
 
 ---
 
-## Étape 1 - Récupérer le projet
+## Étape 1 - Comprendre l'application
 
-Clone le repo `docker-salles` (son adresse est sur le canal de la classe) et ouvre-le dans ton éditeur.
-
-**Tu dois voir :** les dossiers `app`, `td` et `escape-game`.
-
-Regarde le dossier `app` : c'est toute l'application. Tu n'as pas besoin de la modifier, mais tu dois la **comprendre** assez pour la faire tourner :
+Ouvre le dossier `app` : c'est toute l'application. Tu n'as pas besoin de la modifier, mais tu dois la **comprendre** assez pour la faire tourner :
 
 - `package.json` : la liste des dépendances, et la commande de démarrage (dans `scripts`) ;
 - `server.js` : l'application. Le haut du fichier dit sur quel port elle écoute.
@@ -25,7 +21,7 @@ Dans le dossier `app`, crée un fichier nommé exactement `Dockerfile` : avec un
 
 Écris dedans la recette de l'image, une instruction par ligne. Ta recette doit :
 
-1. partir de l'image **officielle de Node.js**, en **version 24**, dans sa variante **par défaut**, la plus complète (pas `alpine`, pas `slim` : on allégera au TD 3). Cherche le tag sur Docker Hub ;
+1. partir de l'image **officielle de Node.js**, en **version 24**, dans sa variante **complète** basée sur Debian **Bookworm** (pas `slim`, pas `alpine` : on allégera au TD 3). Cherche le tag sur Docker Hub ;
 2. travailler dans le dossier `/app` de l'image ;
 3. copier **tout** le contenu du dossier `app` de ta machine dans ce dossier de l'image ;
 4. installer les dépendances de l'application **pendant le build**, avec `npm install` ;
