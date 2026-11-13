@@ -15,7 +15,7 @@ Tu pars du `app/Dockerfile` du TD 2. Tout se lance depuis le dossier `docker-sal
 À la fin du TD, ton image `salles-api` doit respecter **tous** ces critères :
 
 1. Elle part de l'image officielle de Node 24, dans sa variante la plus légère, et pèse **moins de 200 Mo** (colonne `DISK USAGE`).
-2. **Le cache marche** : après une modification du HTML, le build réutilise l'installation des dépendances. La ligne `RUN npm ...` est marquée `CACHED`.
+2. **Une modification du HTML ne relance pas l'installation des dépendances.**
 3. **Le fichier `.env` n'est pas dans l'image.**
 4. Les dépendances sont installées avec **`npm ci`**, sans les dépendances de développement.
 5. **L'application ne tourne pas en `root`**, mais avec l'utilisateur `node`.
