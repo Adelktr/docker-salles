@@ -12,22 +12,13 @@ Tu pars du `app/Dockerfile` du TD 2. Tout se lance depuis le dossier `docker-sal
 
 ## Le tableau à remplir
 
-Recopie ce tableau dans un fichier ou sur une feuille. Tu le complètes à chaque étape.
-
-| Étape | Taille de l'image | `npm` rejoué après une modif du HTML ? | `.env` présent dans l'image ? | Utilisateur dans le conteneur |
-|---|---|---|---|---|
-| 0. Départ (TD 2) | | | | |
-| 1. Image alpine | | | | |
-| 2. Ordre des COPY | | | | |
-| 3. .dockerignore | | | | |
-| 4. npm ci | | | | |
-| 5. Utilisateur | | | | |
+Ouvre le fichier [`td/td3-mesures.md`](td3-mesures.md) : c'est ton tableau de mesures. Tu remplis une ligne après chaque étape.
 
 Les trois mesures, que tu refais à chaque étape, toujours sur l'image `salles-api` :
 
 **Mesure A - la taille :** affiche l'image `salles-api` avec sa taille. Lis la colonne `DISK USAGE` (`SIZE` sur les anciennes versions de Docker).
 
-**Mesure B - le cache :** modifie une lettre dans `app/public/index.html`, enregistre, puis refabrique l'image. Regarde la ligne `RUN npm ...` dans ce qui défile. Si elle est suivie de `CACHED`, Docker a réutilisé le résultat précédent. Sinon, il a tout réinstallé. Note aussi le temps total affiché en haut (`Building 8.4s`, par exemple).
+**Mesure B - le cache :** modifie une lettre dans `app/public/index.html`, enregistre, puis refabrique l'image. Regarde la ligne `RUN npm ...` dans ce qui défile. Si elle est suivie de `CACHED`, Docker a réutilisé le résultat précédent. Sinon, il a tout réinstallé.
 
 **Mesure C - le contenu et l'utilisateur :** lance deux conteneurs jetables à partir de `salles-api`, qui se suppriment tout seuls dès qu'ils ont fini (le mémo te dit quelle option fait ça). Au lieu de démarrer l'application, le premier exécute `ls -a`, le second `whoami`. Le mémo te montre comment remplacer la commande de démarrage d'une image.
 
@@ -69,7 +60,7 @@ Réorganise ton Dockerfile pour que l'installation des dépendances reste en cac
 
 Fais un build, puis la mesure B **deux fois** : la première reconstruit tout (le Dockerfile a changé), la seconde montre l'effet.
 
-**Tu dois voir :** à la deuxième modification du HTML, `RUN npm install` est suivi de `CACHED`, et le build ne prend plus qu'une ou deux secondes.
+**Tu dois voir :** à la deuxième modification du HTML, `RUN npm install` est suivi de `CACHED`.
 
 ## Étape 3 - Le fichier .dockerignore
 
@@ -130,7 +121,7 @@ Garde ce Dockerfile et ce `.dockerignore` : ce sont ceux de ton projet.
 
 ## Bonus - jusqu'où peux-tu descendre ?
 
-Essaie de faire encore maigrir l'image **sans casser l'application** : la page doit toujours s'afficher. Pistes : les autres variantes de l'image `node` sur Docker Hub, le *multi-stage build* (on en parle demain). Note ta meilleure taille.
+Essaie de faire encore maigrir l'image **sans casser l'application** : la page doit toujours s'afficher. Pistes : les autres variantes de l'image `node` sur Docker Hub, le *multi-stage build* (on en parle demain). Note ta meilleure taille dans `td3-mesures.md`.
 
 ---
 
