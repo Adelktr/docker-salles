@@ -96,6 +96,7 @@ Affiche la liste des images présentes sur ta machine.
 | `Cannot connect to the Docker daemon` ou `error during connect` | Docker Desktop n'est pas lancé. Ouvre-le, attends la baleine, recommence. |
 | `toomanyrequests: You have reached your pull rate limit` | Tu n'es pas connecté à Docker Hub : refais l'étape 2. |
 | `manifest unknown` ou `not found` | Le tag n'existe pas. Vérifie son orthographe exacte dans l'onglet *Tags* de Docker Hub. |
+| Le conteneur s'arrête aussitôt (`Exited (127)`), et son journal affiche `8080:80: not found` | Tu as écrit le port **après** le nom de l'image. Tout ce qui suit l'image est pris comme la commande à lancer dans le conteneur. Les options (`-d`, `--name`, `-p`…) vont toutes **avant** l'image. Supprime le conteneur et relance. |
 | `Bind for 0.0.0.0:8080 failed: port is already allocated` | Un autre programme utilise déjà le port 8080. Prends le port 8081 sur ta machine et ouvre <http://localhost:8081>. |
 | `Conflict. The container name "/web" is already in use` | Un conteneur `web` existe déjà, même arrêté. Supprime-le de force, puis relance. |
 | `You cannot remove a running container` | Arrête-le d'abord, ou force la suppression (voir le mémo). |
