@@ -62,7 +62,7 @@ Affiche aussi le journal du conteneur `api`.
 
 Affiche l'image `salles-api` avec sa taille.
 
-**Tu dois voir :** une taille autour de **1 à 1,6 Go**. Note-la, on s'en sert au TD 3. Pour une application de deux fichiers, c'est énorme.
+**Tu dois voir :** une ligne `salles-api:latest`. La taille est dans la colonne `DISK USAGE` (`SIZE` sur les anciennes versions de Docker) : environ **1,1 Go**. Note-la, on s'en sert au TD 3. Pour une application de deux fichiers, c'est énorme.
 
 ## Étape 7 - Modifier le code
 

@@ -1,6 +1,6 @@
 # TD 3 - Une image plus légère, plus rapide, plus propre
 
-**Objectif :** améliorer ton Dockerfile du TD 2 en appliquant cinq changements, un par un, et **mesurer** l'effet de chacun. Ton image va passer d'environ 1,5 Go à environ 200 Mo.
+**Objectif :** améliorer ton Dockerfile du TD 2 en appliquant cinq changements, un par un, et **mesurer** l'effet de chacun. Ton image va passer d'environ 1,1 Go à moins de 200 Mo.
 
 **Durée :** 50 min
 
@@ -25,7 +25,7 @@ Recopie ce tableau dans un fichier ou sur une feuille. Tu le complètes à chaqu
 
 Les trois mesures, que tu refais à chaque étape, toujours sur l'image `salles-api` :
 
-**Mesure A - la taille :** affiche l'image `salles-api` avec sa taille.
+**Mesure A - la taille :** affiche l'image `salles-api` avec sa taille. Lis la colonne `DISK USAGE` (`SIZE` sur les anciennes versions de Docker).
 
 **Mesure B - le cache :** modifie une lettre dans `app/public/index.html`, enregistre, puis refabrique l'image. Regarde la ligne `RUN npm ...` dans ce qui défile. Si elle est suivie de `CACHED`, Docker a réutilisé le résultat précédent. Sinon, il a tout réinstallé. Note aussi le temps total affiché en haut (`Building 8.4s`, par exemple).
 
@@ -43,7 +43,7 @@ SECRET=ne-doit-pas-finir-dans-l-image
 
 Puis fais un build, et les trois mesures A, B et C.
 
-**Tu dois voir :** une image d'environ 1 à 1,6 Go ; `RUN npm install` **sans** `CACHED` ; `.env` dans la liste des fichiers ; `root` comme utilisateur. Quatre problèmes : on les règle un par un.
+**Tu dois voir :** une image d'environ 1,1 Go ; `RUN npm install` **sans** `CACHED` ; `.env` dans la liste des fichiers ; `root` comme utilisateur. Quatre problèmes : on les règle un par un.
 
 ## Étape 1 - Une image de base plus petite
 
@@ -53,7 +53,7 @@ Retourne sur la page de l'image officielle de Node.js sur Docker Hub, et trouve 
 
 Build, puis mesures A, B et C.
 
-**Tu dois voir :** la taille tombe autour de **150 à 250 Mo**. C'est le plus gros gain du TD.
+**Tu dois voir :** la taille tombe sous les **200 Mo**, environ six fois moins. C'est le plus gros gain du TD.
 
 ## Étape 2 - L'ordre des instructions et le cache
 
